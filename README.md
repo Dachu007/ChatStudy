@@ -77,46 +77,54 @@ Client-server chat applications are foundational to real-time communication over
 
 Client:
 ```
-import socket
+ import socket
+ from datetime import datetime
+ 
 s=socket.socket()
+ 
 s.bind(('localhost',8000))
+ 
 s.listen(5)
-c,addr=s.accept()
-size=int(input("Enter number of frames to send : "))
-l=list(range(size))
-s=int(input("Enter Window Size : "))
-st=0
-i=0
-while True:
-    while(i<len(l)):
-        st+=s
-        c.send(str(l[i:st]).encode())
-        ack=c.recv(1024).decode()
-        if ack:
-            print(ack)
-            i+=s
+ c,addr=s.accept()
+ print("Client Address : ",addr)
+ 
+now = datetime.now()
+ 
+c.send(now.strftime("%d/%m/%Y %H:%M:%S").encode())
+ ack=c.recv(1024).decode()
+ 
+if ack:
+    print(ack)
+ 
+c.close()
+
 ```
   Server:
 
   ```
-import socket
-s=socket.socket()
-s.connect(('localhost',8000))
-while True: 
-    print(s.recv(1024).decode())
-    s.send("acknowledgement recived from the server".encode())
+import socket 
+s=socket.socket() 
+s.connect(('localhost',8000)) 
+print(s.getsockname()) 
+print(s.recv(1024).decode()) 
+s.send("acknowledgement recived from the server".encode()) 
+
 ```
 
 ## Output:
 
 Client:
 
-![Screenshot 2025-04-30 194347](https://github.com/user-attachments/assets/52e9736b-98f0-48af-8565-15900a70d66b)
+![Screenshot 2025-04-22 205109](https://github.com/user-attachments/assets/b9a7a91d-be80-4fff-890c-c098ce4c7b92)
+
+
 
 
 Server:
+![Screenshot 2025-04-22 205151](https://github.com/user-attachments/assets/1823d239-716c-4004-88d8-ec5e48201ce7)
 
-![Screenshot 2025-04-30 194449](https://github.com/user-attachments/assets/8886d789-0d30-450c-aa00-22bdadfadcff)
+
+
 
 
   
