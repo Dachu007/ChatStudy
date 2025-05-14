@@ -77,51 +77,68 @@ Client-server chat applications are foundational to real-time communication over
 
 Client:
 ```
+
  import socket
- from datetime import datetime
- 
-s=socket.socket()
- 
-s.bind(('localhost',8000))
- 
-s.listen(5)
- c,addr=s.accept()
- print("Client Address : ",addr)
- 
-now = datetime.now()
- 
-c.send(now.strftime("%d/%m/%Y %H:%M:%S").encode())
- ack=c.recv(1024).decode()
- 
-if ack:
-    print(ack)
- 
-c.close()
+
+def client_program():
+    host = socket.gethostname() 
+    port = 5000  
+
+    client_socket = socket.socket()  
+    client_socket.connect((host, port))  
+
+    message = input(" -> ")  
+
+    while message.lower().strip() != 'bye':
+        client_socket.send(message.encode())  
+        data = client_socket.recv(1024).decode()  
+
+        print('Received from server: ' + data)  
+
+        message = input(" -> ")  
+
+    client_socket.close() 
+
+if __name__ == '__main__':
+    client_program()
 
 ```
   Server:
 
   ```
-import socket 
-s=socket.socket() 
-s.connect(('localhost',8000)) 
-print(s.getsockname()) 
-print(s.recv(1024).decode()) 
-s.send("acknowledgement recived from the server".encode()) 
+ import socket
+def server_program():
+    host = socket.gethostname()
+    port = 5000
+
+    server_socket = socket.socket() 
+    server_socket.bind((host, port))  
+
+
+    server_socket.listen(2)
+    conn, address = server_socket.accept()  
+    print("Connection from: " + str(address))
+    while True:
+        
+        data = conn.recv(1024).decode()
+        if not data:
+            break
+        print("from connected user: " + str(data))
+        data = input(' -> ')
+        conn.send(data.encode())  
+
+    conn.close()  
+
+
+if __name__ == '__main__':
+    server_program()
+
 
 ```
-
 ## Output:
 
-Client:
+![17472403563203880072847608009917](https://github.com/user-attachments/assets/d9b0abf6-f953-4e3c-af6c-689c0837e248)
 
-![Screenshot 2025-04-22 205109](https://github.com/user-attachments/assets/b9a7a91d-be80-4fff-890c-c098ce4c7b92)
-
-
-
-
-Server:
-![Screenshot 2025-04-22 205151](https://github.com/user-attachments/assets/1823d239-716c-4004-88d8-ec5e48201ce7)
 
 
 
